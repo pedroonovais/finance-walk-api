@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.finance_walk_api.model.Category;
 import br.com.fiap.finance_walk_api.repository.CategoryRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/categories")
@@ -36,7 +37,7 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Category create(@RequestBody Category category) {
+    public Category create(@RequestBody @Valid Category category) {
         log.info("Cadastrando categoria " + category.getName());
         return repository.save(category);
     }
