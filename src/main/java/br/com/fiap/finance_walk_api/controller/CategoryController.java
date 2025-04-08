@@ -3,6 +3,8 @@ package br.com.fiap.finance_walk_api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,24 +19,39 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.finance_walk_api.model.Category;
 import br.com.fiap.finance_walk_api.repository.CategoryRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/categories")
 @Slf4j
+@Cacheable(value = "categories")
 public class CategoryController {
 
     @Autowired
     private CategoryRepository repository;
 
     @GetMapping
+    @Cacheable
+    @Operation(
+        summary = "Listar todas as categorias", 
+        description = "Retorna todas as categorias cadastradas",
+        tags = {"Category"}
+    )
     public List<Category> index() {
         return repository.findAll();
     }
 
     @PostMapping
+    @CacheEvict(allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+        responses = @ApiResponse(
+            responseCode = "400"
+        )
+    )
     public Category create(@RequestBody @Valid Category category) {
         log.info("Cadastrando categoria " + category.getName());
         return repository.save(category);
@@ -47,6 +64,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("{id}")
+    @CacheEvict(allEntries = true)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
         log.info("Apagando categoria " + id);
@@ -54,6 +72,7 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
+    @CacheEvict(allEntries = true)
     public Category update(@PathVariable Long id, @RequestBody Category category) {
         log.info("Atualizando categoria " + id + " " + category);	
 

@@ -19,8 +19,8 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
-@RestController
-@RequestMapping("/transactions")
+//@RestController
+//@RequestMapping("/transactions")
 @Slf4j
 public class TransactionController {
     
